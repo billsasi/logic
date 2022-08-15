@@ -1,23 +1,24 @@
-import logo from './logo.svg';
+import { useState, useEffect } from 'react';
 import './App.css';
+import Canvas from './components/Canvas';
 
 function App() {
+  const [savedShapes, setSavedShapes] = useState([]);
+
+  const handleClick = (e) => {
+    console.log(savedShapes);
+  };
+
+  useEffect(() => {
+    console.log(savedShapes);
+  }, [savedShapes]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Canvas
+        savedShapes={savedShapes}
+        setSavedShapes={setSavedShapes}
+      ></Canvas>
     </div>
   );
 }
