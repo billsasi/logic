@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { Connection, Port } from './circuitElements/wires';
 import { And, Or, Not, Switch } from './circuitElements/components';
+import { getNewShape } from './Utils';
 
 let send = false;
 const keyHandler = (e) => {
@@ -22,7 +23,7 @@ let curWire = null;
 let drawingWire = false;
 document.onkeydown = keyHandler;
 
-const Canvas = ({ setSavedShapes }) => {
+const Canvas = ({ setSavedShapes, newShape, setNewShape }) => {
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
 
@@ -75,7 +76,8 @@ const Canvas = ({ setSavedShapes }) => {
   }
 
   function getPressedShape(e) {
-    const x = e.clientX;
+    const rect = e.target.getBoundingClientRect();
+    const x = e.clientX - rect.left;
     const y = e.clientY;
     for (let shape of shapes) {
       let off = shape.isPort ? 5 : 0;
@@ -92,7 +94,9 @@ const Canvas = ({ setSavedShapes }) => {
   }
 
   function handleMouseDown(e) {
-    const { clientX, clientY } = e;
+    const rect = e.target.getBoundingClientRect();
+    let { clientX, clientY } = e;
+    clientX -= rect.left;
     if (selected && !selected.isPort) {
       selected = null;
       return;
@@ -122,7 +126,9 @@ const Canvas = ({ setSavedShapes }) => {
   }
 
   function handleMouseMove(e) {
-    const { clientX, clientY } = e;
+    const rect = e.target.getBoundingClientRect();
+    let { clientX, clientY } = e;
+    clientX -= rect.left;
     if (drawingWire) {
       const { x, y } = selected.start;
       selected.end =
@@ -159,6 +165,7 @@ const Canvas = ({ setSavedShapes }) => {
       canvasRef.current.height
     );
     drawGrid();
+
     for (let shape of shapes) {
       if (shape === selected) ctxRef.current.strokeStyle = 'blue';
       if (shape.isOutput) {
@@ -183,36 +190,21 @@ const Canvas = ({ setSavedShapes }) => {
     const ctx = canvas.getContext('2d');
     ctxRef.current = ctx;
 
-    const sh = new Or(shapes, ctx, 200, 200);
-    for (let i = 0; i < 3; i++) {
-      new Or(
-        shapes,
-        ctx,
-        Math.random() * canvas.width,
-        (Math.random() * canvas.height) / 2
-      );
-      new And(
-        shapes,
-        ctx,
-        Math.random() * canvas.width,
-        (Math.random() * canvas.height) / 2
-      );
-      new Switch(
-        shapes,
-        ctx,
-        Math.random() * canvas.width,
-        (Math.random() * canvas.height) / 2
-      );
-      new Not(shapes, ctx, 100, 100);
-    }
-
     update();
   }, []);
+
+  useEffect(() => {
+    if (newShape !== '') {
+      selected = getNewShape(shapes, ctxRef.current, newShape);
+      selected.offset = { x: 0, y: 0 };
+      setNewShape('');
+    }
+  }, [newShape, setNewShape]);
 
   return (
     <canvas
       ref={canvasRef}
-      width={window.innerWidth}
+      width={window.innerWidth * 0.9}
       height={window.innerHeight}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
