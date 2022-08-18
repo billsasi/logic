@@ -27,3 +27,22 @@ canvas {
   width: 90vw;
   height: 100vh;
 }
+
+.home-menu {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px;
+}
+
+.home-menu > button {
+  width: 10vw;
+  height: 5vh;
+}
+
+.list-item {
+  padding: 5px;
+  border: 1px solid gainsboro;
+}
