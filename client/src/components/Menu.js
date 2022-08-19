@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Menu = ({ setNewShape }) => {
+const Menu = ({ setNewShape, setProj }) => {
   return (
     <div className="menu">
       <div>
@@ -10,7 +10,9 @@ const Menu = ({ setNewShape }) => {
         <button onClick={() => setNewShape('sw')}>SW</button>
       </div>
       <button id="save">Save</button>
-      <button id="save">Open</button>
+      <button id="save" onClick={(e) => setProj(null)}>
+        Open
+      </button>
     </div>
   );
 };

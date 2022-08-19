@@ -17,13 +17,19 @@ const keyHandler = (e) => {
   }
 };
 
-const shapes = [];
+let shapes = [];
 let selected = null;
 let curWire = null;
 let drawingWire = false;
 document.onkeydown = keyHandler;
 
-const Canvas = ({ setSavedShapes, newShape, setNewShape }) => {
+const Canvas = ({
+  setSavedShapes,
+  newShape,
+  setNewShape,
+  proj,
+  editProject,
+}) => {
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
 
@@ -179,6 +185,7 @@ const Canvas = ({ setSavedShapes, newShape, setNewShape }) => {
     }
     if (send) {
       setSavedShapes([...shapes]);
+      editProject(proj);
       send = false;
     }
 
@@ -200,6 +207,10 @@ const Canvas = ({ setSavedShapes, newShape, setNewShape }) => {
       setNewShape('');
     }
   }, [newShape, setNewShape]);
+
+  useEffect(() => {
+    shapes = proj.shapes;
+  }, [proj]);
 
   return (
     <canvas

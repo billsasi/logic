@@ -4,6 +4,7 @@ import Canvas from './components/Canvas';
 import Menu from './components/Menu';
 import Home from './components/Home';
 import axios from 'axios';
+import { inspect } from 'util';
 
 function App() {
   const [savedShapes, setSavedShapes] = useState([]);
@@ -14,6 +15,12 @@ function App() {
   const addProject = async (proj) => {
     const { insertedId } = await axios.post('/projects/', proj);
     setProjects([...projects], { proj, _id: insertedId });
+  };
+
+  const editProject = async (proj) => {
+    console.log(proj);
+    proj.shapes = [3, 5];
+    await axios.post('/projects/update/', proj);
   };
 
   useEffect(() => {
@@ -34,16 +41,19 @@ function App() {
         <>
           <Menu
             id="menu"
+            setProj={setProj}
             setNewShape={setNewShape}
             setSavedShapes={setSavedShapes}
           />
 
           <Canvas
             id="canv"
+            proj={proj}
             savedShapes={savedShapes}
             setSavedShapes={setSavedShapes}
             newShape={newShape}
             setNewShape={setNewShape}
+            editProject={editProject}
           />
         </>
       ) : (
